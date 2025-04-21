@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-4">
+            {% if room.image %}
+                <img src="{{ room.image.url }}" alt="" class="img-fluid">
+            {% endif %}
+        </div>
+        <div class="col-4">
+            <div class="list-group">
+                <h3 class="list-group-item">Room {{ room.room_number }}</h3>
+                <p class="list-group-item">{{ room.description }}</p>
+                <p class="list-group-item">Beds: {{ room.number_of_beds }}</p>
+                <p class="list-group-item">Balcony: {{ room.has_balcony }}</p>
+                <p class="list-group-item">Sea view: {{ room.has_sea_view }}</p>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <strong>Price:</strong> {{ room.price }} MAD
+                </div>
+                <div class="list-group-item">
+                    <strong>Status:</strong> {% if room.is_available %}Available{% else %}Reserved{% endif %}
+                </div>
+                <div class="list-group-item text-center">
+                    <a class="btn btn-dark" href="{% url 'room_list' %}">Retour</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+{% endblock %}

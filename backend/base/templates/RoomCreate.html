@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load custom_tag %}
+{% block title %}Add New Room{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="px-6 py-4 bg-primary">
+            <h1 class="text-2xl font-bold text-white">Add New Room</h1>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" class="p-6 space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Room Number -->
+                <div>
+                    <label for="{{ form.room_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Room Number
+                    </label>
+                    {{ form.room_number|addclass:"w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" }}
+                </div>
+                
+                <!-- Room Type -->
+                <div>
+                    <label for="{{ form.room_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Room Type
+                    </label>
+                    {{ form.room_type|addclass:"w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" }}
+                </div>
+                
+                <!-- Floor -->
+                <div>
+                    <label for="{{ form.floor.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Floor Number
+                    </label>
+                    {{ form.floor|addclass:"w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" }}
+                </div>
+                
+                <!-- Price -->
+                <div>
+                    <label for="{{ form.price.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Price per Night
+                    </label>
+                    <div class="relative rounded-lg shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">$</span>
+                        </div>
+                        {{ form.price|addclass:"pl-7 w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" }}
+                    </div>
+                </div>
+
+                <!-- Number of Beds -->
+                <div>
+                    <label for="{{ form.number_of_beds.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Number of Beds
+                    </label>
+                    {{ form.number_of_beds|addclass:"w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" }}
+                </div>
+
+                <!-- Is Available -->
+                <div>
+                    <label for="{{ form.is_available.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Availability Status
+                    </label>
+                    {{ form.is_available|addclass:"w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" }}
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex items-center space-x-3">
+                    {{ form.has_balcony|addclass:"h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" }}
+                    <label for="{{ form.has_balcony.id_for_label }}" class="text-sm font-medium text-gray-700">
+                        Has Balcony
+                    </label>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    {{ form.has_sea_view|addclass:"h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" }}
+                    <label for="{{ form.has_sea_view.id_for_label }}" class="text-sm font-medium text-gray-700">
+                        Has Sea View
+                    </label>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                </label>
+                {{ form.description|addclass:"w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" }}
+            </div>
+
+            <!-- Room Image -->
+            <div>
+                <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    Room Image
+                </label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-gray-600">
+                            <label for="{{ form.image.id_for_label }}" class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary">
+                                <span>Upload a file</span>
+                                {{ form.image|addclass:"sr-only" }}
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500">
+                            PNG, JPG, GIF up to 10MB
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {% if form.errors %}
+            <div class="rounded-lg bg-red-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">
+                            There were errors with your submission
+                        </h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc pl-5 space-y-1">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="flex justify-end space-x-3 pt-6">
+                <a href="{% url 'room_list' %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    Create Room
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

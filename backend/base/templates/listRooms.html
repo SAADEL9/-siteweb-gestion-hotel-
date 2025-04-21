@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Available Rooms{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Available Rooms</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for room in rooms %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+            <div class="h-64 relative">
+                {% if room.image %}
+                <img src="{{ room.image.url }}" alt="{{ room.name }}" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <i class="fas fa-bed text-4xl text-gray-400"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ room.name }}</h2>
+                <p class="text-gray-600 mb-4">{{ room.description|truncatewords:20 }}</p>
+                
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-building w-6"></i>
+                        <span>Floor {{ room.floor }}</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-bed w-6"></i>
+                        <span>{{ room.number_of_beds }} bed{% if room.number_of_beds != 1 %}s{% endif %}</span>
+                    </div>
+                    {% if room.balcony %}
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-door-open w-6"></i>
+                        <span>Has balcony</span>
+                    </div>
+                    {% endif %}
+                    {% if room.sea_view %}
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-water w-6"></i>
+                        <span>Sea view</span>
+                    </div>
+                    {% endif %}
+                    <div class="flex items-center text-primary font-semibold">
+                        <i class="fas fa-tag w-6"></i>
+                        <span>${{ room.price_per_night }}/night</span>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <a href="{% url 'room_detail' room.id %}" class="btn btn-primary flex-1 text-center">
+                        <i class="fas fa-info-circle mr-2"></i>View Details
+                    </a>
+                    <a href="#" class="btn btn-success flex-1 text-center">
+                        <i class="fas fa-calendar-plus mr-2"></i>Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <i class="fas fa-bed text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-medium text-gray-900">No rooms available</h3>
+            <p class="text-gray-600 mt-2">Please check back later for available rooms.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
