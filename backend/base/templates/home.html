@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="relative h-[60vh]">
+    <!-- Background Image -->
+    <div class="absolute inset-0" >
+        <img src="{% static 'images/hotel-quatre-etoiles-toulouse.webp' %}" alt="Hotel" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    </div>    <!-- Hero Content -->
+    <div class="relative min-h-[60vh] flex items-center justify-center px-4 sm:px-2 lg:px-5">
+        <div class="text-center">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-8">
+                Welcome to Hotel Ba3li
+            </h1>
+            <p class="text-xl sm:text-2xl text-white mb-10 max-w-3xl mx-auto">
+                Experience luxury and comfort in our carefully designed rooms with stunning views and exceptional service
+            </p>
+            <div class="space-x-4">
+                <a href="{% url 'room_list' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <i class="fas fa-bed mr-2"></i>
+                    View Our Rooms
+                </a>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="inline-flex items-center px-6 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Register Now
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>    </div>
+</div>
+
+
+
+<div class="w-full bg-black text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <i class="fas fa-wifi text-3xl mb-4"></i>
+                    <h3 class="text-lg font-semibold">Free Wi-Fi</h3>
+                    <p class="text-gray-300">Stay connected throughout your stay</p>
+                </div>
+                <div>
+                    <i class="fas fa-concierge-bell text-3xl mb-4"></i>
+                    <h3 class="text-lg font-semibold">24/7 Service</h3>
+                    <p class="text-gray-300">Round-the-clock customer support</p>
+                </div>
+                <div>
+                    <i class="fas fa-swimming-pool text-3xl mb-4"></i>
+                    <h3 class="text-lg font-semibold">Luxury Amenities</h3>
+                    <p class="text-gray-300">Premium facilities for your comfort</p>
+                </div>
+            </div>        </div>
+    </div>
+
+<!-- Testimonials Section -->
+<div class="w-full py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">What Our Guests Say</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-4">"Exceptional service and beautiful rooms. The staff went above and beyond to make our stay memorable. Will definitely return!"</p>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-user-circle text-3xl text-gray-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-semibold text-gray-900">Sarah Johnson</h4>
+                        <p class="text-sm text-gray-500">Business Traveler</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-4">"The location is perfect and the amenities are top-notch. The breakfast was amazing and the staff was incredibly friendly."</p>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-user-circle text-3xl text-gray-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-semibold text-gray-900">Michael Rodriguez</h4>
+                        <p class="text-sm text-gray-500">Family Vacation</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-4">"Absolutely stunning hotel with modern amenities. The rooms are spacious and the views are breathtaking. A truly luxurious experience!"</p>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-user-circle text-3xl text-gray-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-semibold text-gray-900">Emma Thompson</h4>
+                        <p class="text-sm text-gray-500">Leisure Stay</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<!-- Map Section -->
+<div class="w-full py-8 bg-gray-100">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Find Us</h2>
+        <div class="aspect-w-16 aspect-h-9">
+            <iframe 
+                class="w-full h-[300px] rounded-lg shadow-lg"
+                frameborder="0" 
+                scrolling="no" 
+                marginheight="0" 
+                marginwidth="0" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3324.940216405878!2d-7.638493!3d33.584622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDM1JzA0LjYiTiA3wrAzOCcxOC42Ilc!5e0!3m2!1sen!2sma!4v1651234567890!5m2!1sen!2sma">
+            </iframe>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
