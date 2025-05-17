@@ -8,9 +8,13 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth import login, logout, authenticate
+from django.core.exceptions import ValidationError
+from django.contrib import messages
+from datetime import date, datetime, timedelta
+from django.utils import timezone
 from .forms import RoomForm, ReservationForm, UserRegistrationForm
-from .models import Room, UserProfile
-
+from .models import Room, UserProfile, Reservation
+from datetime import datetime
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -48,29 +52,77 @@ class IsStaffMixin(UserPassesTestMixin):
 class RoomList(View):
     def get(self, request):
         rooms = Room.objects.all()
-        return render(request, 'listRooms.html', {'rooms': rooms})
+        
+        # Get search parameters
+        check_in = request.GET.get('check_in')
+        check_out = request.GET.get('check_out')
+        room_type = request.GET.get('room_type')
+        
+        # Filter rooms based on search criteria
+        available_rooms = []
+        if check_in and check_out:
+            try:
+                check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
+                check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
+                
+                if check_out_date <= check_in_date:
+                    messages.error(request, "Check-out date must be after check-in date")
+                else:
+                    # Check each room's availability for the selected dates
+                    for room in rooms:
+                        is_available = room.is_available_for_dates(check_in_date, check_out_date)
+                        # Add availability status to the room object
+                        room.is_available = is_available
+                        if is_available:
+                            available_rooms.append(room)
+                    rooms = available_rooms
+            except ValueError:
+                messages.error(request, "Invalid date format")
+        else:
+            # If no dates selected, mark all rooms as needing date selection
+            for room in rooms:
+                room.is_available = None
+        
+        if room_type:
+            rooms = [room for room in rooms if room.room_type == room_type]
+        
+        context = {
+            'rooms': rooms,
+            'check_in': check_in,
+            'check_out': check_out,
+            'room_type': room_type,
+            'room_types': Room.ROOM_TYPES,
+            'today': date.today().isoformat(),
+        }
+        return render(request, 'listRooms.html', context)
 
 def home(request):
-    return render(request,'home.html')
+    context = {
+        'today': date.today(),
+    }
+    return render(request, 'home.html', context)
     
-class RoomDetails(View):
-    def get(self, request, idprod):
-        room = get_object_or_404(Room, id=idprod)
-        form = ReservationForm()
-        return render(request, 'RoomDetails.html', {'room': room, 'form': form})
+@method_decorator(login_required, name='dispatch')
+# views.py
 
-    def post(self, request, idprod):
-        room = get_object_or_404(Room, id=idprod)
-        form = ReservationForm(request.POST)
-        if form.is_valid():
-            reservation = form.save(commit=False)
-            reservation.user = request.user
-            reservation.room = room
-            reservation.save()
-            room.is_available = False
-            room.save()
-            return redirect('reservation_success')
-        return render(request, 'RoomDetails.html', {'room': room, 'form': form})
+
+class RoomDetails(View):
+    def get(self, request, room_id):
+        room = get_object_or_404(Room, pk=room_id)
+        reservations = room.reservation_set.all()
+        blocked_dates = []
+
+        for reservation in reservations:
+            current = reservation.check_in
+            while current <= reservation.check_out:
+                blocked_dates.append(current.strftime('%Y-%m-%d'))
+                current += timedelta(days=1)
+
+        return render(request, 'RoomDetails.html', {
+            'room': room,
+            'blocked_dates': blocked_dates,
+            'today': datetime.today().strftime('%Y-%m-%d'),
+        })
 
 
 @method_decorator(login_required, name='dispatch')
@@ -111,5 +163,13 @@ class RoomDelete(IsStaffMixin, View):
         return HttpResponseRedirect('')
 
 
+@login_required
 def reservation_success(request):
-    return render(request, 'success.html')
+    # Get the user's most recent reservation
+    latest_reservation = Reservation.objects.filter(user=request.user).order_by('-created_at').first()
+    return render(request, 'reservation_success.html', {'reservation': latest_reservation})
+
+@login_required
+def user_reservations(request):
+    reservations = Reservation.objects.filter(user=request.user).order_by('-check_in')
+    return render(request, 'user_reservations.html', {'reservations': reservations})

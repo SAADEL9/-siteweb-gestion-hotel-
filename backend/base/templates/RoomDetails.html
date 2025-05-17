@@ -2,6 +2,30 @@
 
 {% block title %}{{ room.name }} - Room Details{% endblock %}
 
+{% block extra_head %}
+{% load static %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="{% static 'js/datePicker.js' %}"></script>
+<style>
+.flatpickr-day.disabled {
+    background-color: #1f2937 !important; /* black */
+    color: white !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+</style>
+<script>
+    const disabledDates = JSON.parse(document.getElementById('blocked-dates-json').textContent);
+
+  flatpickr(".datepicker", {
+    dateFormat: "Y-m-d",
+    minDate: "{{ today }}",
+    disable: disabledDates
+  });
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -31,18 +55,11 @@
         </div>
 
         <div class="p-8">
-            <!-- Room Header -->
-            <div class="border-b border-gray-200 pb-6 mb-6">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Room {{ room.room_number }}</h1>
-                        <p class="mt-2 text-gray-600">{{ room.description }}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-3xl font-bold text-primary">${{ room.price }}</p>
-                        <p class="text-sm text-gray-600">per night</p>
-                    </div>
-                </div>
+            <!-- Room Details -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Room {{ room.room_number }}</h1>
+                <p class="mt-2 text-gray-600">{{ room.description }}</p>
+                <p class="mt-4 text-2xl font-bold text-primary">${{ room.price }} <span class="text-sm font-normal text-gray-600">per night</span></p>
             </div>
 
             <!-- Room Features -->
@@ -74,29 +91,47 @@
                 </div>
 
                 <!-- Reservation Form -->
-                {% if room.is_available and user.is_authenticated %}
+                {% if user.is_authenticated %}
                 <div class="bg-gray-50 p-6 rounded-lg">
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Make a Reservation</h2>
+                    
+                    {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                        <div class="p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
                     <form method="post" class="space-y-4">
                         {% csrf_token %}
                         <div>
-                            <label for="{{ form.check_in.id_for_label }}" class="block text-sm font-medium text-gray-700">Check-in Date</label>
-                            {{ form.check_in }}
+                            <label for="check_in" class="block text-sm font-medium text-gray-700">Check-in Date</label>
+                            <input type="date" id="check_in" name="check_in" class="datepicker" required>
                         </div>
                         <div>
-                            <label for="{{ form.check_out.id_for_label }}" class="block text-sm font-medium text-gray-700">Check-out Date</label>
-                            {{ form.check_out }}
+                            <label for="check_out" class="block text-sm font-medium text-gray-700">Check-out Date</label>
+                           <input type="date" id="check_out" name="check_out" class="datepicker" required>
                         </div>
-                        <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+
+                        {% if blocked_dates %}
+                        <div class="text-sm text-gray-500">
+                            <p>⚠️ Some dates are not available. Please choose from available dates.</p>
+                        </div>
+                        {% endif %}
+
+                        <button type="submit" class="w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary-dark transition-colors">
                             Book Now
                         </button>
                     </form>
                 </div>
                 {% elif not user.is_authenticated %}
-                <div class="bg-gray-50 p-6 rounded-lg">
+                <div class="bg-gray-50 p-6 rounded-lg text-center">
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Want to make a reservation?</h2>
                     <p class="text-gray-600 mb-4">Please log in to book this room.</p>
-                    <a href="{% url 'login' %}?next={{ request.path }}" class="block w-full bg-primary text-white text-center py-2 px-4 rounded-md hover:bg-primary-dark">
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="block w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary-dark transition-colors">
                         Log In to Book
                     </a>
                 </div>
@@ -110,6 +145,20 @@
                 </div>
                 {% endif %}
             </div>
+
+            <!-- Existing Reservations -->
+            {% if existing_reservations %}
+            <div class="mb-6 bg-yellow-50 p-4 rounded-lg">
+                <h3 class="text-lg font-medium text-yellow-800 mb-2">Upcoming Reservations</h3>
+                <div class="space-y-2">
+                    {% for reservation in existing_reservations %}
+                    <div class="text-sm text-yellow-700">
+                        {{ reservation.check_in|date:"M d, Y" }} - {{ reservation.check_out|date:"M d, Y" }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
 
             <!-- Staff Actions -->
             {% if user.is_staff %}

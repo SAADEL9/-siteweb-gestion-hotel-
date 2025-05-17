@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+{% load math_filters %}
 
 {% block title %}Available Rooms{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">    <div class="flex justify-between items-center mb-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">    
+    <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Available Rooms</h1>
         {% if request.user.is_staff %}
         <a href="{% url 'room_create' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
@@ -11,10 +13,43 @@
         </a>
         {% endif %}
     </div>
-    
+
+    <!-- Search Form -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <label for="check_in" class="block text-sm font-medium text-gray-700 mb-1">
+                    <i class="fas fa-calendar-check mr-2 text-primary"></i>Check-in Date
+                </label>
+                <input type="date" id="check_in" name="check_in" 
+                       class="block w-full px-4 py-2 rounded-lg border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
+                       min="{{ today }}" 
+                       value="{{ check_in|default:'' }}"
+                       required>
+            </div>
+            <div>
+                <label for="check_out" class="block text-sm font-medium text-gray-700 mb-1">
+                    <i class="fas fa-calendar-minus mr-2 text-primary"></i>Check-out Date
+                </label>
+                <input type="date" id="check_out" name="check_out" 
+                       class="block w-full px-4 py-2 rounded-lg border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
+                       min="{{ today }}"
+                       value="{{ check_out|default:'' }}"
+                       required>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors duration-200">
+                    <i class="fas fa-search mr-2"></i>Check Availability
+                </button>
+            </div>
+        </form>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for room in rooms %}
-        <div class="bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-xl"
+             data-aos="fade-up" 
+             data-aos-delay="{{ forloop.counter|add:"-1"|multiply:"100" }}">
             <div class="h-64 relative">
                 {% if room.image %}
                 <img src="{{ room.image.url }}" alt="{{ room.name }}" class="w-full h-full object-cover">
@@ -52,16 +87,31 @@
                     {% endif %}
                     <div class="flex items-center text-primary font-semibold">
                         <i class="fas fa-tag w-6"></i>
-                        <span>${{ room.price_per_night }}/night</span>
+                        <span>${{ room.price }}/night</span>
                     </div>
-                </div>
-                  <div class="flex space-x-4">
-                    <a href="{% url 'room_detail' room.id %}" class="btn btn-primary flex-1 text-center">
+                </div>                  <div class="flex space-x-4">
+                    <a href="{% url 'room_detail' room.id %}" 
+                       class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                         <i class="fas fa-info-circle mr-2"></i>View Details
                     </a>
-                    <a href="#" class="btn btn-success flex-1 text-center">
-                        <i class="fas fa-calendar-plus mr-2"></i>Book Now
-                    </a>
+                    {% if check_in and check_out %}
+                        {% if room.is_available %}
+                        <a href="{% url 'room_detail' room.id %}?check_in={{ check_in }}&check_out={{ check_out }}" 
+                           class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="fas fa-calendar-plus mr-2"></i>Book Now
+                        </a>
+                        {% else %}
+                        <button disabled 
+                                class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-400 cursor-not-allowed">
+                            <i class="fas fa-ban mr-2"></i>Not Available
+                        </button>
+                        {% endif %}
+                    {% else %}
+                        <button disabled 
+                                class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-400 cursor-not-allowed">
+                            <i class="fas fa-calendar mr-2"></i>Select Dates
+                        </button>
+                    {% endif %}
                 </div>
                 {% if request.user.is_staff %}
                 <div class="flex space-x-2 mt-4 border-t pt-4">

@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="{% static 'js/flatpickr.min.js' %}"></script>
+<script src="{% static 'js/datePicker.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/flatpickr.min.css' %}">
 
 {% block content %}
-<div class="relative h-[60vh]">
+<div class="relative h-[70vh]">
     <!-- Background Image -->
-    <div class="absolute inset-0" >
-        <img src="{% static 'images/hotel-quatre-etoiles-toulouse.webp' %}" alt="Hotel" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-    </div>    <!-- Hero Content -->
-    <div class="relative min-h-[60vh] flex items-center justify-center px-4 sm:px-2 lg:px-5">
-        <div class="text-center">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-8">
+    <div class="absolute inset-0">
+        <img src="{% static 'images/background2.jpg' %}" alt="Hotel" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>    </div>    <!-- Hero Content -->
+    <div class="relative h-full flex items-start justify-center px-4 sm:px-2 lg:px-5 pt-32">
+        <div class="text-center">            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4">
                 Welcome to Hotel Ba3li
             </h1>
             <p class="text-xl sm:text-2xl text-white mb-10 max-w-3xl mx-auto">
@@ -26,34 +29,167 @@
                     <i class="fas fa-user-plus mr-2"></i>
                     Register Now
                 </a>
-                {% endif %}
+                {% endif %}            </div>
+        </div>    </div>    <!-- Search Section -->
+<div class="max-w-5xl mx-auto px-4 -mt-48 mb-16 relative z-10">
+    <div class="bg-white rounded-xl shadow-2xl p-6">
+        <form action="{% url 'room_list' %}" method="get" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Check-in Date -->
+                <div class="space-y-2">
+                    <label for="check_in" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-calendar-check mr-2 text-primary"></i>Check-in
+                    </label>
+                    <input type="date" id="check_in" name="check_in" 
+                           class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
+                           min="{{ today|date:'Y-m-d' }}" required placeholder="Select check-in date">
+                </div>
+
+                <!-- Check-out Date -->
+                <div class="space-y-2">
+                    <label for="check_out" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-calendar-minus mr-2 text-primary"></i>Check-out
+                    </label>
+                    <input type="date" id="check_out" name="check_out" 
+                           class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
+                           min="{{ today|date:'Y-m-d' }}" required placeholder="Select check-out date">
+                </div>
+
+                <!-- Room Type -->
+                <div class="space-y-2">
+                    <label for="room_type" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-bed mr-2 text-primary"></i>Room Type
+                    </label>
+                    <select id="room_type" name="room_type" 
+                            class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:ring-primary focus:border-primary">
+                        <option value="">Any Type</option>
+                        <option value="standard">Single</option>
+                        <option value="deluxe">Double</option>
+                        <option value="suite">Suite</option>
+                    </select>
+                </div>
+
+                <!-- Search Button -->
+                <div class="flex items-end">
+                    <button type="submit" 
+                            class="w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-search"></i>
+                        <span>Search Rooms</span>
+                    </button>
+                </div>
             </div>
-        </div>
-    </div>    </div>
+        </form>
+    </div>
+</div>
 </div>
 
 
 
+<!-- Features Section -->
 <div class="w-full bg-black text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div>
-                    <i class="fas fa-wifi text-3xl mb-4"></i>
-                    <h3 class="text-lg font-semibold">Free Wi-Fi</h3>
-                    <p class="text-gray-300">Stay connected throughout your stay</p>
-                </div>
-                <div>
-                    <i class="fas fa-concierge-bell text-3xl mb-4"></i>
-                    <h3 class="text-lg font-semibold">24/7 Service</h3>
-                    <p class="text-gray-300">Round-the-clock customer support</p>
-                </div>
-                <div>
-                    <i class="fas fa-swimming-pool text-3xl mb-4"></i>
-                    <h3 class="text-lg font-semibold">Luxury Amenities</h3>
-                    <p class="text-gray-300">Premium facilities for your comfort</p>
-                </div>
-            </div>        </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+                <i class="fas fa-wifi text-3xl mb-4"></i>
+                <h3 class="text-lg font-semibold">Free Wi-Fi</h3>
+                <p class="text-gray-300">Stay connected throughout your stay</p>
+            </div>
+            <div>
+                <i class="fas fa-concierge-bell text-3xl mb-4"></i>
+                <h3 class="text-lg font-semibold">24/7 Service</h3>
+                <p class="text-gray-300">Round-the-clock customer support</p>
+            </div>
+            <div>
+                <i class="fas fa-swimming-pool text-3xl mb-4"></i>
+                <h3 class="text-lg font-semibold">Luxury Amenities</h3>
+                <p class="text-gray-300">Premium facilities for your comfort</p>
+            </div>
+        </div>
     </div>
+</div>
+
+<!-- Hotel Facilities Section -->
+<div class="w-full py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Hotel Facilities</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">Discover our range of premium amenities designed for your comfort and convenience</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Spa & Wellness -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Spa & Wellness</h3>
+                <p class="text-gray-600">Luxurious spa treatments, sauna, and wellness center for ultimate relaxation</p>
+            </div>
+
+            <!-- Restaurant -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Fine Dining</h3>
+                <p class="text-gray-600">Gourmet restaurant serving international cuisine with panoramic views</p>
+            </div>
+
+            <!-- Fitness Center -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Fitness Center</h3>
+                <p class="text-gray-600">Modern gym equipment and personal training services available</p>
+            </div>
+
+            <!-- Pool -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-swimming-pool"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Swimming Pool</h3>
+                <p class="text-gray-600">Outdoor infinity pool with sun deck and poolside service</p>
+            </div>
+
+            <!-- Business Center -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Business Center</h3>
+                <p class="text-gray-600">Full-service business center with meeting rooms and conference facilities</p>
+            </div>
+
+            <!-- Parking -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-parking"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Secure Parking</h3>
+                <p class="text-gray-600">24/7 secure underground parking with valet service</p>
+            </div>
+
+            <!-- Room Service -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-concierge-bell"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">24/7 Room Service</h3>
+                <p class="text-gray-600">Round-the-clock in-room dining with extensive menu options</p>
+            </div>
+
+            <!-- Laundry -->
+            <div class="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Laundry Service</h3>
+                <p class="text-gray-600">Express laundry and dry-cleaning services available daily</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Testimonials Section -->
 <div class="w-full py-16 bg-gray-50">
@@ -130,24 +266,7 @@
             </div>
         </div>
     </div>
-    
 </div>
 
-<!-- Map Section -->
-<div class="w-full py-8 bg-gray-100">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Find Us</h2>
-        <div class="aspect-w-16 aspect-h-9">
-            <iframe 
-                class="w-full h-[300px] rounded-lg shadow-lg"
-                frameborder="0" 
-                scrolling="no" 
-                marginheight="0" 
-                marginwidth="0" 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3324.940216405878!2d-7.638493!3d33.584622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDM1JzA0LjYiTiA3wrAzOCcxOC42Ilc!5e0!3m2!1sen!2sma!4v1651234567890!5m2!1sen!2sma">
-            </iframe>
-        </div>
-        
-    </div>
-</div>
-{% endblock %}
+
+{% endblock content %}

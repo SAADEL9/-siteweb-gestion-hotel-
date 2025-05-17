@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 py-12">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full mx-auto flex items-center justify-center">
+                    <i class="fas fa-check text-3xl text-green-600"></i>
+                </div>
+                <h2 class="mt-4 text-3xl font-bold text-gray-900">Reservation Successful!</h2>
+                {% if reservation %}
+                <div class="mt-8 bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Reservation Details</h3>
+                    <div class="space-y-3 text-left">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Room:</span>
+                            <span class="font-medium">{{ reservation.room.room_number }} ({{ reservation.room.get_room_type_display }})</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Check-in:</span>
+                            <span class="font-medium">{{ reservation.check_in|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Check-out:</span>
+                            <span class="font-medium">{{ reservation.check_out|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Price:</span>
+                            <span class="font-medium">${{ reservation.room.price }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="mt-2 text-lg text-gray-600">Your room has been successfully reserved.</p>
+                {% endif %}
+                
+                <div class="mt-8 space-y-4">
+                    <a href="{% url 'user_reservations' %}" class="block w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary-dark transition-colors">
+                        View My Reservations
+                    </a>
+                    <a href="{% url 'room_list' %}" class="block w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-200 transition-colors">
+                        Browse More Rooms
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

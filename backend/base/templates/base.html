@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Hotel Reservation System{% endblock %}</title>
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
     <script>
@@ -21,48 +23,95 @@
             }
         }
     </script>
-
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <!-- AOS CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkInInput = document.getElementById('check_in');
+            const checkOutInput = document.getElementById('check_out');
+
+            function updateMinCheckOutDate() {
+                if (checkInInput.value) {
+                    const checkInDate = new Date(checkInInput.value);
+                    const nextDay = new Date(checkInDate);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    checkOutInput.min = nextDay.toISOString().split('T')[0];
+                    
+                    // If check-out date is before check-in date, reset it
+                    if (checkOutInput.value && new Date(checkOutInput.value) <= checkInDate) {
+                        checkOutInput.value = nextDay.toISOString().split('T')[0];
+                    }
+                }
+            }
+
+            if (checkInInput && checkOutInput) {
+                checkInInput.addEventListener('change', updateMinCheckOutDate);
+                // Set initial min date for both inputs
+                const today = new Date().toISOString().split('T')[0];
+                checkInInput.min = today;
+                updateMinCheckOutDate();
+            }
+        });
+    </script>
+    
     {% block extra_head %}{% endblock %}
 </head>
-<body class="min-h-screen bg-gray-50 flex flex-col">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md">
+<body class="min-h-screen bg-gray-50 flex flex-col">    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50 backdrop-blur-sm bg-white/90">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex">
-                    <div class="flex-shrink-0 flex items-center">
-                        <a href="{% url 'room_list' %}" class="text-2xl font-bold text-primary">
-                            <i class="fas fa-hotel mr-2"></i>
-                            Hotel
-                        </a>                    </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="{% url 'home' %}" class="inline-flex items-center px-1 pt-1 text-gray-900">
-                            <i class="fas fa-home mr-1"></i> Home
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="{% url 'room_list' %}" class="flex items-center space-x-2">
+                            <i class="fas fa-hotel text-3xl text-primary"></i>
+                            <span class="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                                Hotel Ba3li
+                            </span>
                         </a>
-                        <a href="{% url 'room_list' %}" class="inline-flex items-center px-1 pt-1 text-gray-900">
-                            <i class="fas fa-bed mr-1"></i> Rooms
+                    </div>
+                    <div class="hidden md:flex md:ml-10 md:space-x-8">
+                        <a href="{% url 'home' %}" 
+                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary transition-colors duration-200 border-b-2 border-transparent hover:border-primary">
+                            <i class="fas fa-home mr-2"></i> Home
+                        </a>                        <a href="{% url 'room_list' %}" 
+                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary transition-colors duration-200 border-b-2 border-transparent hover:border-primary">
+                            <i class="fas fa-bed mr-2"></i> Rooms                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'user_reservations' %}" 
+                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary transition-colors duration-200 border-b-2 border-transparent hover:border-primary">
+                            <i class="fas fa-calendar-alt mr-2"></i> My Reservations
                         </a>
                         {% if user.is_staff %}
-                        <a href="{% url 'room_create' %}" class="inline-flex items-center px-1 pt-1 text-gray-900">
-                            <i class="fas fa-plus mr-1"></i> Add Room
+                        <a href="{% url 'room_create' %}" 
+                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-primary transition-colors duration-200 border-b-2 border-transparent hover:border-primary">
+                            <i class="fas fa-plus mr-2"></i> Add Room
                         </a>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center space-x-4">
                     {% if user.is_authenticated %}
-                        <span class="text-gray-700 mr-4">Welcome, {{ user.username }}</span>
-                        <a href="{% url 'logout' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <div class="hidden md:flex items-center space-x-2 mr-4">
+                            <i class="fas fa-user-circle text-primary text-xl"></i>
+                            <span class="text-gray-700 font-medium">{{ user.username }}</span>
+                        </div>
+                        <a href="{% url 'logout' %}" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-full text-sm font-medium text-white bg-primary hover:bg-primary/90 transition-colors duration-200 shadow-sm hover:shadow-md">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
                         </a>
                     {% else %}
-                        <a href="{% url 'login' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary mr-2">
+                        <a href="{% url 'login' %}" 
+                           class="inline-flex items-center px-4 py-2 border border-primary rounded-full text-sm font-medium text-primary hover:bg-primary hover:text-white transition-colors duration-200">
                             <i class="fas fa-sign-in-alt mr-2"></i> Login
                         </a>
-                        <a href="{% url 'register' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-success hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success">
+                        <a href="{% url 'register' %}" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-full text-sm font-medium text-white bg-primary hover:bg-primary/90 transition-colors duration-200 shadow-sm hover:shadow-md">
                             <i class="fas fa-user-plus mr-2"></i> Register
                         </a>
                     {% endif %}
@@ -70,6 +119,9 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Spacer for fixed navbar -->
+    <div class="h-20"></div>
 
     <!-- Main Content -->
     <main class="flex-grow">
@@ -82,9 +134,18 @@
             {% endfor %}
         </div>
         {% endif %}
-        
-        {% block content %}{% endblock %}
+          {% block content %}{% endblock %}
     </main>
+
+    <!-- AOS Init -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    </script>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white mt-8">
