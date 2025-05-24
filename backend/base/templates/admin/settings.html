@@ -1,0 +1,292 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+
+{% block title %}Settings - Hotel Admin{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Settings</h1>
+            <p class="text-gray-600">Configure your hotel management system</p>
+        </div>
+        <div class="flex space-x-4">
+            <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                <i class="fas fa-save mr-2"></i> Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Sections -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left Sidebar -->
+    <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-sm">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">Settings Menu</h2>
+            </div>
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#general" class="flex items-center p-2 rounded hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-cog w-6"></i>
+                            <span>General Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#rooms" class="flex items-center p-2 rounded hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-bed w-6"></i>
+                            <span>Room Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#booking" class="flex items-center p-2 rounded hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-calendar-check w-6"></i>
+                            <span>Booking Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#payment" class="flex items-center p-2 rounded hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-credit-card w-6"></i>
+                            <span>Payment Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#email" class="flex items-center p-2 rounded hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-envelope w-6"></i>
+                            <span>Email Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#notifications" class="flex items-center p-2 rounded hover:bg-gray-100 text-gray-700">
+                            <i class="fas fa-bell w-6"></i>
+                            <span>Notification Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:col-span-2">
+        <!-- General Settings -->
+        <div id="general" class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">General Settings</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Hotel Name</label>
+                        <input type="text" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" value="Luxestay Hotel">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Hotel Address</label>
+                        <textarea class="form-textarea w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" rows="3"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                        <input type="email" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Time Zone</label>
+                        <select class="form-select w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                            <option value="UTC">UTC</option>
+                            <option value="EST">EST</option>
+                            <option value="PST">PST</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Settings -->
+        <div id="rooms" class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">Room Settings</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Default Check-in Time</label>
+                        <input type="time" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Default Check-out Time</label>
+                        <input type="time" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Stay Duration (nights)</label>
+                        <input type="number" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Stay Duration (nights)</label>
+                        <input type="number" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Settings -->
+        <div id="booking" class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">Booking Settings</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Advance Booking Period (days)</label>
+                        <input type="number" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cancellation Policy</label>
+                        <select class="form-select w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                            <option value="flexible">Flexible</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="strict">Strict</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Booking Confirmation Required</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary">
+                                <span class="ml-2">Require confirmation for all bookings</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Settings -->
+        <div id="payment" class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">Payment Settings</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                        <select class="form-select w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Methods</label>
+                        <div class="mt-2 space-y-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary" checked>
+                                <span class="ml-2">Credit Card</span>
+                            </label>
+                            <br>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary" checked>
+                                <span class="ml-2">PayPal</span>
+                            </label>
+                            <br>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary">
+                                <span class="ml-2">Bank Transfer</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Deposit Required</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary">
+                                <span class="ml-2">Require deposit for bookings</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Settings -->
+        <div id="email" class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">Email Settings</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Host</label>
+                        <input type="text" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Port</label>
+                        <input type="number" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Username</label>
+                        <input type="text" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">SMTP Password</label>
+                        <input type="password" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div id="notifications" class="bg-white rounded-lg shadow-sm">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">Notification Settings</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Notifications</label>
+                        <div class="mt-2 space-y-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary" checked>
+                                <span class="ml-2">New Booking</span>
+                            </label>
+                            <br>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary" checked>
+                                <span class="ml-2">Booking Cancellation</span>
+                            </label>
+                            <br>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary" checked>
+                                <span class="ml-2">Payment Received</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">SMS Notifications</label>
+                        <div class="mt-2 space-y-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary">
+                                <span class="ml-2">New Booking</span>
+                            </label>
+                            <br>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary">
+                                <span class="ml-2">Booking Cancellation</span>
+                            </label>
+                            <br>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" class="form-checkbox text-primary">
+                                <span class="ml-2">Payment Received</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ room.name }} - Room Details{% endblock %}
+
+{% block extra_head %}
+{% load static %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="{% static 'js/datePicker.js' %}" defer></script>
+<style>
+.flatpickr-day.disabled {
+    background-color: #1f2937 !important; /* black */
+    color: white !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Custom .datepicker CSS removed as form widgets will provide styling */
+</style>
+
+{# This uses Django's json_script template tag to safely pass dates to JavaScript #}
+{{ blocked_dates|json_script:"blocked-dates-json" }}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <!-- Room Image Section -->
+        <div class="mb-6">
+            {# Main Image Display #}
+            <div class="relative h-96 mb-4">
+                <img id="mainRoomImage" src="{% if room.image1 %}{{ room.image1.url }}{% elif room.image %}{{ room.image.url }}{% else %}{% static 'images/placeholder-room.png' %}{% endif %}" alt="Room {{ room.room_number }} - Main Image" class="w-full h-full object-cover rounded-t-lg md:rounded-lg">
+                <div class="absolute top-4 left-4">
+                    <a href="{% url 'room_list' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black bg-opacity-50 hover:bg-opacity-75 focus:outline-none">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Rooms
+                    </a>
+                </div>
+                {% if room.is_available %}
+                    <div class="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                        Available
+                    </div>
+                {% else %}
+                    <div class="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                        Reserved
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Thumbnail Images #}
+            <div class="grid grid-cols-4 gap-4 px-4 md:px-0"> {# Changed to grid-cols-4 to include image1 thumbnail #}
+                {% if room.image1 %}
+                    <div class="h-32 cursor-pointer room-thumbnail" data-image-url="{{ room.image1.url }}" data-alt-text="Room {{ room.room_number }} - Image 1">
+                        <img src="{{ room.image1.url }}" alt="Thumbnail {{ room.room_number }} - Image 1" class="w-full h-full object-cover rounded-md border-2 border-transparent hover:border-primary transition-all">
+                    </div>
+                {% endif %}
+                {% if room.image2 %}
+                    <div class="h-32 cursor-pointer room-thumbnail" data-image-url="{{ room.image2.url }}" data-alt-text="Room {{ room.room_number }} - Image 2">
+                        <img src="{{ room.image2.url }}" alt="Thumbnail {{ room.room_number }} - Image 2" class="w-full h-full object-cover rounded-md border-2 border-transparent hover:border-primary transition-all">
+                    </div>
+                {% endif %}
+                {% if room.image3 %}
+                    <div class="h-32 cursor-pointer room-thumbnail" data-image-url="{{ room.image3.url }}" data-alt-text="Room {{ room.room_number }} - Image 3">
+                        <img src="{{ room.image3.url }}" alt="Thumbnail {{ room.room_number }} - Image 3" class="w-full h-full object-cover rounded-md border-2 border-transparent hover:border-primary transition-all">
+                    </div>
+                {% endif %}
+                {% if room.image4 %}
+                    <div class="h-32 cursor-pointer room-thumbnail" data-image-url="{{ room.image4.url }}" data-alt-text="Room {{ room.room_number }} - Image 4">
+                        <img src="{{ room.image4.url }}" alt="Thumbnail {{ room.room_number }} - Image 4" class="w-full h-full object-cover rounded-md border-2 border-transparent hover:border-primary transition-all">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="p-8">
+            <!-- Room Details -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Room {{ room.room_number }}</h1>
+                {# Static Description Section that should have been added previously #}
+                <div class="mt-4 mb-4 text-gray-700">
+                    <p>Indulge in unparalleled comfort and breathtaking views from our meticulously designed rooms.</p>
+                    <p>Discover a perfect blend of modern amenities and serene ambiance, ensuring a memorable escape.</p>
+                    <p>Your ideal retreat awaits, promising relaxation and rejuvenation during your stay with us.</p>
+                </div>
+
+                <p class="mt-4 text-2xl font-bold text-primary">${{ room.price }} <span class="text-sm font-normal text-gray-600">per night</span></p>
+            </div>
+
+            <!-- Room Features -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold text-gray-900">Room Features</h2>
+                    <div class="grid grid-cols-2 gap-4 text-gray-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-bed w-6"></i>
+                            <span>{{ room.number_of_beds }} bed{% if room.number_of_beds != 1 %}s{% endif %}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-building w-6"></i>
+                            <span>Floor {{ room.floor }}</span>
+                        </div>
+                        {% if room.has_balcony %}
+                        <div class="flex items-center">
+                            <i class="fas fa-door-open w-6"></i>
+                            <span>Balcony</span>
+                        </div>
+                        {% endif %}
+                        {% if room.has_sea_view %}
+                        <div class="flex items-center">
+                            <i class="fas fa-water w-6"></i>
+                            <span>Sea View</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {# Static Amenities Section #}
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold text-gray-800">Standard Amenities Included</h3>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-gray-600 mt-2">
+                            <div class="flex items-center">
+                                <i class="fas fa-wifi w-6 mr-2 text-primary"></i>
+                                <span>High-speed Wi-Fi</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-tv w-6 mr-2 text-primary"></i>
+                                <span>Flat-screen TV</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-wind w-6 mr-2 text-primary"></i>
+                                <span>Air Conditioning</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-bath w-6 mr-2 text-primary"></i>
+                                <span>Private Bathroom</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-coffee w-6 mr-2 text-primary"></i>
+                                <span>Coffee/Tea Maker</span>
+                            </div>
+                             <div class="flex items-center">
+                                <i class="fas fa-phone-alt w-6 mr-2 text-primary"></i>
+                                <span>Telephone</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if room.description %}
+                        <div class="mt-6">
+                            <h3 class="text-lg font-semibold text-gray-800">Description</h3>
+                            <p class="mt-1 text-gray-600 whitespace-pre-line">{{ room.description }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Reservation Form -->
+                {% if user.is_authenticated %}
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Make a Reservation</h2>
+                    
+                    {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                        <div class="p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="space-y-4">
+                        {% csrf_token %}
+                        
+                        {# Render non-field errors if any (e.g., from form.clean()) #}
+                        {% if form.non_field_errors %}
+                            <div class="p-4 bg-red-100 text-red-700 rounded-lg">
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div>
+                            {{ form.check_in.label_tag }}
+                            {{ form.check_in }}
+                            {% if form.check_in.errors %}
+                                <div class="text-red-500 text-sm mt-1">
+                                    {% for error in form.check_in.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            {{ form.check_out.label_tag }}
+                            {{ form.check_out }}
+                            {% if form.check_out.errors %}
+                                <div class="text-red-500 text-sm mt-1">
+                                    {% for error in form.check_out.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if blocked_dates and not form.errors %}
+                        {# Only show this generic message if there are no specific form errors #}
+                        <div class="text-sm text-gray-500">
+                            <p>⚠️ Some dates are not available. Please choose from available dates.</p>
+                        </div>
+                        {% endif %}
+
+                        <button type="submit" class="w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary-dark transition-colors">
+                            Book Now
+                        </button>
+                    </form>
+                </div>
+                {% elif not user.is_authenticated %}
+                <div class="bg-gray-50 p-6 rounded-lg text-center">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Want to make a reservation?</h2>
+                    <p class="text-gray-600 mb-4">Please log in to book this room.</p>
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="block w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary-dark transition-colors">
+                        Log In to Book
+                    </a>
+                </div>
+                {% else %}
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Room Not Available</h2>
+                    <p class="text-gray-600">This room is currently reserved. Please check other available rooms.</p>
+                    <a href="{% url 'room_list' %}" class="block w-full bg-primary text-white text-center py-2 px-4 rounded-md hover:bg-primary-dark mt-4">
+                        View Other Rooms
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Existing Reservations -->
+            {% if existing_reservations %}
+            <div class="mb-6 bg-yellow-50 p-4 rounded-lg">
+                <h3 class="text-lg font-medium text-yellow-800 mb-2">Upcoming Reservations</h3>
+                <div class="space-y-2">
+                    {% for reservation in existing_reservations %}
+                    <div class="text-sm text-yellow-700">
+                        {{ reservation.check_in|date:"M d, Y" }} - {{ reservation.check_out|date:"M d, Y" }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Staff Actions -->
+            {% if user.is_staff %}
+            <div class="border-t border-gray-200 pt-6">
+                <div class="flex space-x-4">
+                    <a href="{% url 'room_update' room.id %}" class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <i class="fas fa-edit mr-2"></i>Edit Room
+                    </a>
+                    <a href="{% url 'room_delete' room.id %}" onclick="return confirm('Are you sure you want to delete this room?')" 
+                       class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete Room
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %} {# Add a new block for page-specific scripts #}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mainImage = document.getElementById('mainRoomImage');
+    const thumbnails = document.querySelectorAll('.room-thumbnail');
+
+    if (mainImage && thumbnails.length > 0) {
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function () {
+                const newImageUrl = this.dataset.imageUrl;
+                const newAltText = this.dataset.altText;
+                if (newImageUrl) {
+                    mainImage.src = newImageUrl;
+                    mainImage.alt = newAltText;
+
+                    // Optional: Add active state to clicked thumbnail
+                    thumbnails.forEach(t => t.querySelector('img').classList.remove('border-primary', 'ring-2', 'ring-primary'));
+                    this.querySelector('img').classList.add('border-primary', 'ring-2', 'ring-primary');
+                }
+            });
+        });
+
+        // Optional: Set the first thumbnail as active initially if it corresponds to the main image
+        if (thumbnails[0] && mainImage.src === thumbnails[0].dataset.imageUrl) {
+             thumbnails[0].querySelector('img').classList.add('border-primary', 'ring-2', 'ring-primary');
+        }
+    }
+});
+</script>
+{% endblock %}

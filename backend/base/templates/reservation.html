@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="p-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-8">Réserver une Chambre</h1>
+
+                {% if room %}
+                <!-- Détails de la chambre sélectionnée -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-8">
+                    <div class="flex items-start space-x-6">
+                        {% if room.image %}
+                        <img src="{{ room.image.url }}" alt="Chambre {{ room.room_number }}" class="w-48 h-32 object-cover rounded-lg">
+                        {% else %}
+                        <div class="w-48 h-32 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-bed text-4xl text-gray-400"></i>
+                        </div>
+                        {% endif %}
+                        <div class="flex-1">
+                            <h2 class="text-xl font-semibold text-gray-900">Chambre {{ room.room_number }}</h2>
+                            <p class="text-gray-600">{{ room.get_room_type_display }}</p>
+                            <div class="mt-2 space-y-1">
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-bed w-6"></i>
+                                    <span>{{ room.number_of_beds }} lit{% if room.number_of_beds != 1 %}s{% endif %}</span>
+                                </div>
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-building w-6"></i>
+                                    <span>Étage {{ room.floor }}</span>
+                                </div>
+                                {% if room.has_balcony %}
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-door-open w-6"></i>
+                                    <span>Balcon</span>
+                                </div>
+                                {% endif %}
+                                {% if room.has_sea_view %}
+                                <div class="flex items-center text-gray-600">
+                                    <i class="fas fa-water w-6"></i>
+                                    <span>Vue sur la mer</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="mt-2 text-xl font-bold text-primary">
+                                {{ room.price }} € / nuit
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    {% if room %}
+                    <input type="hidden" name="room" value="{{ room.id }}">
+                    {% endif %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Check-in Date -->
+                        <div>
+                            <label for="check_in" class="block text-sm font-medium text-gray-700">Date d'arrivée</label>
+                            <input type="date" name="check_in" id="check_in" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                                min="{% now 'Y-m-d' %}">
+                        </div>
+
+                        <!-- Check-out Date -->
+                        <div>
+                            <label for="check_out" class="block text-sm font-medium text-gray-700">Date de départ</label>
+                            <input type="date" name="check_out" id="check_out" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                                min="{% now 'Y-m-d' %}">
+                        </div>
+
+                        <!-- Number of Guests -->
+                        <div>
+                            <label for="guests" class="block text-sm font-medium text-gray-700">Nombre de personnes</label>
+                            <select name="guests" id="guests" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                                <option value="1">1 personne</option>
+                                <option value="2">2 personnes</option>
+                                <option value="3">3 personnes</option>
+                                <option value="4">4 personnes</option>
+                            </select>
+                        </div>
+
+                        <!-- Full Name -->
+                        <div>
+                            <label for="full_name" class="block text-sm font-medium text-gray-700">Nom complet</label>
+                            <input type="text" name="full_name" id="full_name" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                                placeholder="Votre nom complet">
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" name="email" id="email" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                                placeholder="votre@email.com">
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Numéro de téléphone</label>
+                            <input type="tel" name="phone" id="phone" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                                placeholder="06 12 34 56 78">
+                        </div>
+
+                        <!-- Special Requests -->
+                        <div class="md:col-span-2">
+                            <label for="special_requests" class="block text-sm font-medium text-gray-700">Demandes spéciales</label>
+                            <textarea name="special_requests" id="special_requests" rows="3"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                                placeholder="Précisez vos demandes spéciales (optionnel)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <a href="{% url 'room_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Retour aux chambres
+                        </a>
+                        <button type="submit"
+                            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            <i class="fas fa-calendar-check mr-2"></i>
+                            Confirmer la réservation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkInInput = document.getElementById('check_in');
+    const checkOutInput = document.getElementById('check_out');
+    
+    // Définir la date minimale pour check-in comme aujourd'hui
+    const today = new Date().toISOString().split('T')[0];
+    checkInInput.min = today;
+    
+    // Mettre à jour la date minimale de check-out quand check-in change
+    checkInInput.addEventListener('change', function() {
+        checkOutInput.min = this.value;
+        if (checkOutInput.value && checkOutInput.value < this.value) {
+            checkOutInput.value = this.value;
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

@@ -1,0 +1,256 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+
+{% block title %}Reports - Hotel Admin{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Reports</h1>
+            <p class="text-gray-600">Hotel performance and analytics</p>
+        </div>
+        <div class="flex space-x-4">
+            <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                <i class="fas fa-download mr-2"></i> Export Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Date Range Filter -->
+<div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+            <select class="form-select w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="year">This Year</option>
+                <option value="custom">Custom Range</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">From</label>
+            <input type="date" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">To</label>
+            <input type="date" class="form-input w-full rounded-lg border border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+        </div>
+        <div class="flex items-end">
+            <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors w-full">
+                Apply Filter
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Key Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+                <i class="fas fa-dollar-sign text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-gray-500">Total Revenue</p>
+                <p class="text-2xl font-semibold text-gray-800">${{ total_revenue }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-green-500 text-sm font-semibold">
+                <i class="fas fa-arrow-up"></i> 12%
+            </span>
+            <span class="text-gray-500 text-sm ml-2">vs last period</span>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100 text-green-500">
+                <i class="fas fa-bed text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-gray-500">Occupancy Rate</p>
+                <p class="text-2xl font-semibold text-gray-800">{{ occupancy_rate }}%</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-green-500 text-sm font-semibold">
+                <i class="fas fa-arrow-up"></i> 5%
+            </span>
+            <span class="text-gray-500 text-sm ml-2">vs last period</span>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+                <i class="fas fa-users text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-gray-500">Total Guests</p>
+                <p class="text-2xl font-semibold text-gray-800">{{ total_guests }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-red-500 text-sm font-semibold">
+                <i class="fas fa-arrow-down"></i> 3%
+            </span>
+            <span class="text-gray-500 text-sm ml-2">vs last period</span>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 text-purple-500">
+                <i class="fas fa-star text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-gray-500">Average Rating</p>
+                <p class="text-2xl font-semibold text-gray-800">{{ average_rating }}/5</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-green-500 text-sm font-semibold">
+                <i class="fas fa-arrow-up"></i> 0.2
+            </span>
+            <span class="text-gray-500 text-sm ml-2">vs last period</span>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Revenue Trend -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Revenue Trend</h2>
+        <canvas id="revenueTrendChart" height="300"></canvas>
+    </div>
+
+    <!-- Room Type Distribution -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Room Type Distribution</h2>
+        <canvas id="roomTypeChart" height="300"></canvas>
+    </div>
+</div>
+
+<!-- Additional Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Booking Sources -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Booking Sources</h2>
+        <canvas id="bookingSourcesChart" height="300"></canvas>
+    </div>
+
+    <!-- Guest Demographics -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Guest Demographics</h2>
+        <canvas id="guestDemographicsChart" height="300"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Revenue Trend Chart
+    const revenueTrendCtx = document.getElementById('revenueTrendChart').getContext('2d');
+    new Chart(revenueTrendCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Revenue',
+                data: [12000, 19000, 15000, 25000, 22000, 30000],
+                borderColor: '#3B82F6',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Room Type Distribution Chart
+    const roomTypeCtx = document.getElementById('roomTypeChart').getContext('2d');
+    new Chart(roomTypeCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Single', 'Double', 'Suite'],
+            datasets: [{
+                data: [30, 45, 25],
+                backgroundColor: ['#3B82F6', '#10B981', '#F59E0B']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Booking Sources Chart
+    const bookingSourcesCtx = document.getElementById('bookingSourcesChart').getContext('2d');
+    new Chart(bookingSourcesCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Direct', 'Online Travel Agency', 'Phone', 'Other'],
+            datasets: [{
+                data: [40, 30, 20, 10],
+                backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Guest Demographics Chart
+    const guestDemographicsCtx = document.getElementById('guestDemographicsChart').getContext('2d');
+    new Chart(guestDemographicsCtx, {
+        type: 'bar',
+        data: {
+            labels: ['18-24', '25-34', '35-44', '45-54', '55+'],
+            datasets: [{
+                label: 'Age Distribution',
+                data: [15, 30, 25, 20, 10],
+                backgroundColor: '#3B82F6'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %} 

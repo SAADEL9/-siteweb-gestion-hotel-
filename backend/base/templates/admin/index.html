@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .dashboard-redirect {
+        text-align: center;
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 600px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .dashboard-button {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: #3B82F6;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        margin-top: 1rem;
+        transition: background 0.3s ease;
+    }
+    .dashboard-button:hover {
+        background: #2563EB;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-redirect">
+    <h1>Welcome to Hotel Management System</h1>
+    <p>You are now logged in as an administrator.</p>
+    <a href="{% url 'admin_dashboard' %}" class="dashboard-button">
+        Go to Dashboard
+    </a>
+</div>
+{% endblock %} 

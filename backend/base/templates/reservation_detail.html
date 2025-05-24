@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                    <h1 class="text-3xl font-bold text-gray-900">Réservation Confirmée</h1>
+                    <p class="text-gray-600 mt-2">Votre réservation a été confirmée avec succès</p>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Détails de la chambre -->
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">Détails de la Chambre</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-door-open w-6 text-gray-500"></i>
+                                    <span class="ml-2">Chambre {{ reservation.room.room_number }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-bed w-6 text-gray-500"></i>
+                                    <span class="ml-2">{{ reservation.room.get_room_type_display }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-money-bill-wave w-6 text-gray-500"></i>
+                                    <span class="ml-2">{{ reservation.room.price }} € / nuit</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Détails de la réservation -->
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">Détails de la Réservation</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-check w-6 text-gray-500"></i>
+                                    <span class="ml-2">Arrivée: {{ reservation.check_in|date:"d/m/Y" }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-times w-6 text-gray-500"></i>
+                                    <span class="ml-2">Départ: {{ reservation.check_out|date:"d/m/Y" }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock w-6 text-gray-500"></i>
+                                    <span class="ml-2">Durée: {{ duration }} jour(s)</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-users w-6 text-gray-500"></i>
+                                    <span class="ml-2">{{ reservation.guests }} personne(s)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations du client -->
+                    <div class="mt-8 border-t border-gray-200 pt-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Informations du Client</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-gray-600">Nom complet</p>
+                                <p class="font-medium">{{ reservation.full_name }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Email</p>
+                                <p class="font-medium">{{ reservation.email }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Téléphone</p>
+                                <p class="font-medium">{{ reservation.phone }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if reservation.special_requests %}
+                    <div class="mt-8 border-t border-gray-200 pt-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Demandes Spéciales</h2>
+                        <p class="text-gray-600">{{ reservation.special_requests }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-8 border-t border-gray-200 pt-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-600">Numéro de réservation</p>
+                                <p class="font-medium">#{{ reservation.id }}</p>
+                            </div>
+                            <a href="{% url 'room_list' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                                <i class="fas fa-home mr-2"></i>
+                                Retour à l'accueil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
